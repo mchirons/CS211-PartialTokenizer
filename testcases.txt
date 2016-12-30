@@ -1,0 +1,153 @@
+What follows are test cases for the tokenizer program from the tokenizer.c file
+
+
+No args, empty args, and only whitespace
+
+Test Case 1
+	$ ./tokenizer
+	
+Test Case 2
+	$ ./tokenizer ""
+	
+Test Case 3
+	$ ./tokenizer " "
+	
+Test Case 4
+	$ ./tokenizer "                "
+	
+Single valid tokens
+
+Test Case 5
+	$ ./tokenizer "1"
+	decimal 	1
+	
+Test Case 6
+	$ ./tokenizer "1234"
+	decimal 	1234
+	
+Test Case 7
+	$ ./tokenizer "0712"
+	octal		0712
+	
+Test Case 8
+	$ ./tokenizer "0x2B"
+	hex 		0x2B
+	
+Test Case 9
+	$ ./tokenizer "0x2b"
+	hex 		0x2b
+	
+Test Case 10
+	$ ./tokenizer "1.35"
+	float 		1.35
+	
+Test Case 11
+	$ ./tokenizer "3e10"
+	float 		3e10
+	
+Test Case 12
+	$ ./tokenizer "3E10"
+	float 		3E10
+	
+Test Case 13
+	$ ./tokenizer "3.1e+10"
+	float 		3.1e+10
+	
+Test Case 14
+	$ ./tokenizer "3.1e-10"
+	float 		3.1e-10
+	
+Test Case 15
+	$ ./tokenizer "0.1"
+	float 		0.1
+	
+Test Case 16
+	$ ./tokenizer "0.1e10"
+	float 		0.1e10
+	
+Multiple valid tokens separated by whitespace
+
+Test Case 17
+	$ ./tokenizer "1234 0712 0x2B 0x2b 1.35 3e10 3E10 3.1e+10 3.1e-10 0.1 0.1e10"
+	decimal		1234
+	octal		0712
+	hex		0x2B
+	hex		0x2b
+	float		1.35
+	float		3e10
+	float		3E10
+	float		3.1e+10
+	float		3.1e-10
+	float 		0.1
+	float		0.1e10
+
+Multiple valid tokens separated by whitespace and bad characters
+
+Test Case 18
+	$ ./tokenizer "1234g0712t0x2BX0x2br1.35f3e10q3.1e+10.3.1e-10t0.1x0.1e10w"
+	error:		bad character [0x67]
+	decimal		1234
+	error:		bad character [0x74]
+	octal		0712
+	error:		bad character [0x58]
+	hex		0x2B
+	error:		bad character [0x72]
+	hex:		0x2b
+	error:		bad character [0x66]
+	float		1.35
+	error:		bad character [0x71]
+	float		3e10
+	error:		bad character [0x2e]
+	float		3.1e+10
+	error:		bad character [0x74]
+	float		3.1e-10
+	error:		bad character [0x78]
+	float		0.1
+	error:		bad character [0x77]
+	float		0.1e10
+
+mal tokens
+
+Test Case 19
+	./tokenizer "1.A"
+	error: 		mal token
+	
+Test Case 20
+	./tokenizer "4ef"
+	error: 		mal token
+Test Case 21
+	./tokenizer "0xr"
+	error: 		mal token
+Test Case 22
+	./tokenizer "0.z"
+	error: 		mal token
+
+Test Case 23
+	./tokenizer "5ex"
+	error: 		mal token
+	
+Test Case 24
+	./tokenizer "5E+"
+	error: 		mal token
+
+Mix of valid tokens, mal tokens, whitespace and bad characters
+
+Test Case 26
+	./tokenizer "  4.12g 5543234e. 0x43B[03234532	0.123421e-321.. "
+	error:		bad character [0x67]
+	float		4.12
+	error:		mal token
+	error:		bad character [0x5b]
+	hex		0x43B
+	error:		bad character [0x2e]
+	octal		032345320
+	error:		bad character [0x2e]
+	float		123421e-321
+	error:		mal token
+
+Bad character error format 
+
+Test Case 27
+	./tokenizer "1234A"
+	error: 		bad character [0x41]
+	decimal 	1234
